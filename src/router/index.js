@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
-import Table from '@/components/Table'
+import pageOne from '@/view/pageOne'
+import pageTwo from '@/view/pageTwo'
 
 Vue.use(Router)
 export default new Router({
@@ -13,9 +14,14 @@ export default new Router({
       component: HelloWorld
     },
     {
-      path: '/table',
-      name: 'Table',
-      component: Table
+      path: '/pageOne',
+      name: 'pageOne',
+      component: pageOne
+    },
+    {
+      path: '/pageTwo',
+      name: 'pageTwo',
+      component: pageTwo
     }
   ]
 })
