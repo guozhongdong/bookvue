@@ -33,12 +33,18 @@ var app = new Vue({
   data: {
     query:'',
     songsList:[],
-    musicUrl:''
+    musicUrl:'',
+    imgUrl:'',
+    comment:[],
+    isPlaying:false,
+    loadShow:false,
+    mvUrl:''
   },
   methods: {
     searchMusic: function () {
       var _this = this;
       axios.get('https://autumnfish.cn/search?keywords=' + this.query).then(function (resp) {
+        console.log(resp);
         _this.songsList = resp.data.result.songs;
 
       }, function (error) {
@@ -54,6 +60,57 @@ var app = new Vue({
       },function (error) {
 
       })
+      axios.get('https://autumnfish.cn/song/detail?ids='+musicId).then(function (resp) {
+        _this.imgUrl = resp.data.songs[0].al.picUrl;
+
+      },function (error) {
+
+      })
+      // 获取歌曲热门评论
+      axios.get('https://autumnfish.cn/comment/hot?type=0&id='+musicId).then(function (resp) {
+
+        var hotComments = resp.data.hotComments;
+        var top = 10;
+        for (var i = 0; i < hotComments.length; i++) {
+
+          _this.comment.push(
+            {'name':hotComments[i].user.nickname,
+              'content':hotComments[i].content,
+              'img':hotComments[i].user.avatarUrl});
+          top--
+          if (top < 0){
+            return;
+          }
+        }
+
+
+      },function (error) {
+
+      })
+
+    },
+    play: function () {
+      this.isPlaying = true;
+
+    },
+    pause: function () {
+      this.isPlaying = false;
+
+    },
+    playMv: function (mvid) {
+      var _this = this;
+      axios.get('https://autumnfish.cn/mv/url?id='+mvid).then(function (resp) {
+        _this.loadShow = true;
+        _this.mvUrl = resp.data.data.url;
+          console.log(resp);
+      })
+    },
+    close: function () {
+      var _this = this;
+      _this.loadShow = false;
+      _this.mvUrl = '';
+
     }
+
   }
 });

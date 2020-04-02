@@ -23,38 +23,44 @@
         <!-- 搜索歌曲列表 -->
         <div class='song_wrapper'>
           <ul class="song_list" >
-           <li v-for="(item,index) in songsList"><a @click="listenToMusic(item.id)" href="javascript:;"></a> <b>{{item.name}}</b> <span><i></i></span></li>
+           <li v-for="(item,index) in songsList"><a @click="listenToMusic(item.id)" href="javascript:;"></a>
+             <b>{{item.name}}</b>
+             <span @click="playMv(item.mvid)">
+               <i v-show="item.mvid != 0"></i>
+             </span>
+           </li>
           </ul>
           <img src="images/line.png" class="switch_btn" alt="">
         </div>
         <!-- 歌曲信息容器 -->
-        <div class="player_con" class="playing">
+        <div class="player_con" :class="{playing:isPlaying}">
           <img src="images/player_bar.png" class="play_bar" />
           <!-- 黑胶碟片 -->
           <img src="images/disc.png" class="disc autoRotate" />
-          <img src="images/cover.png" class="cover autoRotate" />
+          <img :src="imgUrl" class="cover autoRotate" />
         </div>
+
         <!-- 评论容器 -->
         <div class="comment_wrapper">
           <h5 class='title'>热门留言</h5>
           <div class='comment_list'>
-            <dl >
-              <dt><img src="./images/person.png" alt=""></dt>
-              <dd class="name">盐焗西兰花</dd>
+            <dl v-for="item in comment">
+              <dt><img :src="item.img" alt=""></dt>
+              <dd class="name">{{item.name}}</dd>
               <dd class="detail">
-                绝对值得一听，吹爆
+                {{item.content}}
               </dd>
             </dl>
           </div>
           <img src="images/line.png" class="right_line">
         </div>
       </div>
-      <div class="audio_con">
-        <audio ref='audio'  :src="musicUrl" controls autoplay loop class="myaudio"></audio>
+      <div class="audio_con" >
+        <audio ref='audio'  @pause="pause" @play="play" :src="musicUrl" controls autoplay loop class="myaudio"></audio>
       </div>
-      <div class="video_con"  style="display: none;">
-        <video  controls="controls"></video>
-        <div class="mask" ></div>
+      <div class="video_con"  v-show="loadShow" style="display: none;">
+        <video  :src="mvUrl" controls="controls"></video>
+        <div class="mask" @click="close"></div>
       </div>
     </div>
   </div>
