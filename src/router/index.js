@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import PageOne from '@/view/pageOne'
+import bookmanage from '@/view/bookmanage'
 import PageTwo from '@/view/pageTwo'
 import PageThree from '@/view/pageThree'
 import PageFour from '@/view/pageFour'
@@ -12,35 +12,35 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: '导航一',
+      name: '图书管理',
       component: Index,
-      redirect:'pageOne',
+      redirect:'bookmanage',
       children: [
         {
-          path: '/pageOne',
-          name: '页面一',
-          component: PageOne
+          path: '/bookmanage',
+          name: '图书列表',
+          component: bookmanage
         },
         {
           path: '/pageTwo',
-          name: '页面二',
+          name: '用户列表',
           component: PageTwo
         }
       ]
     },
     {
       path: '/navigation',
-      name: '导航二',
+      name: '菜单管理',
       component: Index,
       children: [
         {
           path: '/pageThree',
-          name: '页面三',
+          name: '角色管理',
           component: PageThree
         },
         {
           path: '/pageFour',
-          name: '页面四',
+          name: '权限管理',
           component: PageFour
         }
       ]
