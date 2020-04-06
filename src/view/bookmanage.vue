@@ -1,65 +1,76 @@
 
 <template id="book">
-  <div>
-    <el-button type="primary" @click="addBook">新增</el-button>
-  <el-table
-    :data="tableData"
-    border
-    style="width: 100%">
-    <el-table-column
-      fixed
-      prop="id"
-      label="编号"
-      width="150">
-    </el-table-column>
-    <el-table-column
-      prop="name"
-      label="书名"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      prop="author"
-      label="作者"
-      width="120">
-    </el-table-column>
-    <el-table-column
-      prop="publishDate"
-      label="发布日期"
-      width="120">
-    </el-table-column>
+  <div class="app-container">
+    <div class="filter-container">
+      <el-form>
+        <el-form-item>
+          <el-button type="primary" @click="addBook">新增</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
 
-    <el-table-column
-      prop="bookType"
-      label="图书类别"bookCount
-      width="120">
-    </el-table-column>
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%">
+      <el-table-column
+        fixed
+        align="center"
+        prop="id"
+        label="编号"
+        width="150">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        align="center"
+        label="书名"
+        style="width: 80px;">
+      </el-table-column>
+      <el-table-column
+        prop="author"
+        align="center"
+        label="作者"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="publishDate"
+        align="center"
+        label="发布日期"
+        width="120">
+      </el-table-column>
 
-    <el-table-column
-      prop="bookCount"
-      label="图书统计"
-      width="120">
-    </el-table-column>
+      <el-table-column
+        prop="bookType"
+        label="图书类别"
+        align="center"
+        width="120">
+      </el-table-column>
 
-    <el-table-column
-      label="操作"
-      width="100">
-      <template slot-scope="scope">
+      <el-table-column
+        prop="bookCount"
+        align="center"
+        label="图书统计"
+        width="120">
+      </el-table-column>
 
-        <el-button type="text" size="small" @click="editData(scope.row)">编辑</el-button>
-        <el-button @click="deleteBook(scope.row.id)" type="text" size="small">删除</el-button>
-      </template>
-    </el-table-column>
+      <el-table-column
+        label="操作"
+        align="center"
+        width="100">
+        <template slot-scope="scope">
 
-  </el-table>
+          <el-button type="text" size="small" @click="editData(scope.row)">编辑</el-button>
+          <el-button @click="deleteBook(scope.row.id)" type="text" size="small">删除</el-button>
+        </template>
+      </el-table-column>
+
+    </el-table>
     <el-pagination
       layout="prev, pager, next"
       :page-size="pageSize"
       @current-change="page"
       :total="total">
     </el-pagination>
-
-
-
     <el-dialog title="新增图书" center width="30%" :visible.sync="addDialog">
       <el-form :model="form"   ref="form" label-width="80px">
 

@@ -5,11 +5,18 @@ import PageTwo from '@/view/pageTwo'
 import PageThree from '@/view/pageThree'
 import PageFour from '@/view/pageFour'
 import Index from '@/view/index'
+import Login from '@/view/login/index'
 
 Vue.use(Router)
 export default new Router({
   'mode': 'history',
   routes: [
+    {
+      path: '/login',
+      name: '登录页',
+      hidden:true,
+      component: Login
+    },
     {
       path: '/',
       name: '图书管理',
