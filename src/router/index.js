@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import bookmanage from '@/view/bookmanage'
-import PageTwo from '@/view/pageTwo'
 import PageThree from '@/view/pageThree'
 import PageFour from '@/view/pageFour'
 import Index from '@/view/index'
 import Login from '@/view/login/index'
+import User from '@/view/user'
 
 Vue.use(Router)
 export default new Router({
@@ -29,9 +29,9 @@ export default new Router({
           component: bookmanage
         },
         {
-          path: '/pageTwo',
+          path: '/user',
           name: '用户列表',
-          component: PageTwo
+          component: User
         }
       ]
     },
