@@ -10,7 +10,20 @@ export default {
       addDialog:false,
       formLabelWidth:'120px',
       editDialog:false,
-      roles: []
+      roles: [],
+      textMap: {
+        update: '编辑',
+        create: '新建用户'
+      },
+      dialogFormVisible: false,
+      dialogStatus: 'create',
+      tempUser: {
+        username: '',
+        password: '',
+        nickname: '',
+        roleId: '',
+        userId: ''
+      }
     }
   },
   created(){
@@ -33,10 +46,23 @@ export default {
       _this.axios.get('http://localhost:8182//user/getAllRoles').then(function (resp) {
         console.log(resp)
         if (resp.data.success) {
-          _this.roles = resp.data.pageObjectList;
+          _this.roles = resp.data.result;
+          console.log(_this.roles)
         }
 
       })
+    },
+    showCreate() {
+      //显示新增对话框
+      this.tempUser.username = "";
+      this.tempUser.password = "";
+      this.tempUser.nickname = "";
+      this.tempUser.roleId = "";
+      this.tempUser.userId = "";
+      this.dialogStatus = "create";
+      this.getAllRoles();
+      console.log(this.roles);
+      this.dialogFormVisible = true
     },
     handleClick(row) {
       console.log(row);
@@ -61,9 +87,21 @@ export default {
       this.pageNum = val
       this.page(val);
     },
-    deleteBook (id){
+    createUser() {
+      //添加新用
       const _this = this;
+      _this.axios.post('http://localhost:8182//user/addUser',_this.tempUser).then(function (resp) {
+        console.log(resp)
+        if (resp.data.success) {
+          _this.$message({
+            message: '恭喜你，添加用户成功',
+            type: 'success'
+          });
+          _this.page(1);
+          _this.dialogFormVisible = false
+        }
 
+      })
     },
 
     page(data){

@@ -43,18 +43,22 @@
     },
     methods: {
       handleLogin() {
-        this.$refs.loginForm.validate(valid => {
+        const _this = this;
+        _this.$refs.loginForm.validate(valid => {
           if (valid) {
-            this.loading = true
-            this.$store.dispatch('Login', this.loginForm).then(data => {
-              this.loading = false
-              if ("success" === data.result) {
-                this.$router.push({path: '/'})
-              } else {
-                this.$message.error("账号/密码错误");
-              }
+            _this.loading = true
+              _this.axios.post('http://localhost:8182/login/auth',_this.loginForm).then(function (resp) {
+                
+                _this.loading = false
+                debugger;
+                if (resp.data.success) {
+                  _this.$router.push({path: '/'})
+                }else{
+                  _this.$message.error("账号/密码错误");
+                }
+
             }).catch(() => {
-              this.loading = false
+                    _this.loading = false
             })
           } else {
             return false
