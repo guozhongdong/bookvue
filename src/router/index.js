@@ -18,6 +18,12 @@ export default new Router({
       component: Login
     },
     {
+      path: '/book/bookmanage',
+      name: '登录页',
+      hidden:true,
+      component: bookmanage
+    },
+    {
       path: '/',
       name: '图书管理',
       component: Index,

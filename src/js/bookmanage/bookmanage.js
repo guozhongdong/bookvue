@@ -2,14 +2,16 @@
 export default {
   data(){
     return {
-      pageSize:5,
-      pageNum:1,
-      total:10,
+      
       tableData: [],
-
+      total:10,
       addDialog:false,
       formLabelWidth:'120px',
       editDialog:false,
+      listQuery:{
+        pageSize: 5,
+        pageNum: 1, 
+      },
       form:{
         name:'',
         author:'',
@@ -31,14 +33,18 @@ export default {
   },
   created(){
     const _this = this;
-    _this.axios.get('http://localhost:8182/book/findAll/'+_this.pageNum+'/5').then(function (resp) {
-      console.log(resp)
-      if (resp.data.success) {
-        _this.tableData = resp.data.pageObjectList;
-        _this.pageSize = resp.data.pageSize;
-        _this.total = resp.data.total;
-      }
 
+    _this.api({
+      url: "/book/findAll",
+      method: "get",
+      params: _this.listQuery
+    }).then(data => {
+      console.log(data);
+      if (data.success) {
+        _this.tableData = data.pageObjectList;
+        _this.listQuery.pageSize = data.pageSize;
+        _this.total = data.total;
+      }
     })
   },
   methods:{
@@ -64,9 +70,14 @@ export default {
 
     edit (){
       const _this = this;
-      console.log(_this.form);
-      _this.axios.post('http://localhost:8182/book/update',_this.updateForm).then(function (resp) {
-        if (resp.data.success) {
+      //var queryParam = JSON.stringify(_this.updateForm);
+      _this.api({
+        url: "/book/update",
+        method: "post",
+        data: _this.updateForm
+      }).then(data => {
+        console.log(data);
+        if (data.success) {
           _this.$message({
             message: '恭喜你，修改成功',
             type: 'success'
@@ -74,7 +85,6 @@ export default {
           _this. page(1);
           _this.editDialog = false;
         }
-        console.log(resp);
       })
     },
     cancelDialog (){
@@ -85,8 +95,13 @@ export default {
     add (){
       const _this = this;
       console.log(_this.form);
-      _this.axios.post('http://localhost:8182/book/save',_this.form).then(function (resp) {
-        if (resp.data.success) {
+
+      _this.api({
+        url: "/book/save",
+        method: "post",
+        data: _this.form
+      }).then(data => {
+        if (data.success) {
           _this.$message({
             message: '恭喜你，新增成功',
             type: 'success'
@@ -94,34 +109,44 @@ export default {
           _this. page(1);
           _this.addDialog = false;
         }
-        console.log(resp);
       })
+    
     },
     deleteBook (id){
       const _this = this;
-      _this.axios.get('http://localhost:8182/book/deleteById/'+id).then(function (resp) {
-        if (resp.data.success) {
+
+      _this.api({
+        url: "/book/deleteById",
+        method: "get",
+        params: {id:id}
+      }).then(data => {
+        if (data.success) {
           _this.$message({
             message: '恭喜你，删除成功',
             type: 'success'
           });
           _this. page(1);
         }
-        console.log(resp);
       })
-      console.log(id);
+    
     },
 
     page(data){
       const _this = this;
-      _this.axios.get('http://localhost:8182/book/findAll/'+data+'/'+_this.pageSize+'').then(function (resp) {
-        if (resp.data.success) {
-          _this.tableData = resp.data.pageObjectList;
-          _this.pageSize = resp.data.pageSize;
-          _this.total = resp.data.total;
+      _this.listQuery.pageNum = data;
+      _this.api({
+        url: "/book/findAll",
+        method: "get",
+        params: _this.listQuery
+      }).then(data => {
+        console.log(data);
+        if (data.success) {
+          _this.tableData = data.pageObjectList;
+          _this.listQuery.pageSize = data.pageSize;
+          _this.total = data.total;
         }
       })
-
+    
     }
   }
 }

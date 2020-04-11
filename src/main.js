@@ -8,6 +8,10 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
+import '@/icons' // icon
+import {default as api} from './utils/api'
+
+Vue.prototype.api = api
 
 Vue.use(ElementUI)
 Vue.prototype.axios = axios

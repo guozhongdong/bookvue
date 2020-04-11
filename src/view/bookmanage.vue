@@ -67,7 +67,7 @@
     </el-table>
     <el-pagination
       layout="prev, pager, next"
-      :page-size="pageSize"
+      :page-size="listQuery.pageSize"
       @current-change="page"
       :total="total">
     </el-pagination>
