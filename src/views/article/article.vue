@@ -8,46 +8,123 @@
         </el-form-item>
       </el-form>
     </div>
-    <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit
-              highlight-current-row>
-      <el-table-column align="center" label="序号" width="80">
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%">
+      <el-table-column
+        fixed
+        align="center"
+        prop="id"
+        label="编号"
+        width="150">
+      </el-table-column>
+      <el-table-column
+        prop="name"
+        align="center"
+        label="书名"
+        style="width: 80px;">
+      </el-table-column>
+      <el-table-column
+        prop="author"
+        align="center"
+        label="作者"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="publishDate"
+        align="center"
+        label="发布日期"
+        width="240">
+      </el-table-column>
+
+      <el-table-column
+        prop="bookType"
+        label="图书类别"
+        align="center"
+        width="120">
+      </el-table-column>
+
+      <el-table-column
+        prop="bookCount"
+        align="center"
+        label="图书统计"
+        width="120">
+      </el-table-column>
+
+      <el-table-column
+        label="操作"
+        align="center"
+        width="100">
         <template slot-scope="scope">
-          <span v-text="getIndex(scope.$index)"> </span>
+
+          <el-button type="text" size="small" @click="editData(scope.row)">编辑</el-button>
+          <el-button @click="deleteBook(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="content" label="文章" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" label="创建时间" width="170">
-        <template slot-scope="scope">
-          <span>{{scope.row.createTime}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
-        <template slot-scope="scope">
-          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
-        </template>
-      </el-table-column>
+
     </el-table>
     <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="listQuery.pageNum"
-      :page-size="listQuery.pageRow"
-      :total="totalCount"
-      :page-sizes="[10, 20, 50, 100]"
-      layout="total, sizes, prev, pager, next, jumper">
+      layout="prev, pager, next"
+      :page-size="listQuery.pageSize"
+      @current-change="page"
+      :total="total">
     </el-pagination>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form class="small-space" :model="tempArticle" label-position="left" label-width="60px"
-               style='width: 300px; margin-left:50px;'>
-        <el-form-item label="文章">
-          <el-input type="text" v-model="tempArticle.content">
-          </el-input>
+    <el-dialog title="新增图书" center width="30%" :visible.sync="addDialog">
+      <el-form :model="form"   ref="form" label-width="80px">
+
+        <el-form-item label="图书名称" prop="name">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="作者" prop="author">
+          <el-input v-model="form.author"></el-input>
+        </el-form-item>
+
+        <el-form-item label="出版社" prop="publish">
+          <el-input v-model="form.publish"></el-input>
+        </el-form-item>
+        <el-form-item label="发布日期" prop="publishDate">
+          <el-date-picker type="date" placeholder="选择日期" v-model="form.publishDate" style="width: 100%;"></el-date-picker>
+        </el-form-item>
+        <el-form-item label="图书类型" prop="bookType">
+          <el-input v-model="form.bookType"></el-input>
+        </el-form-item>
+        <el-form-item label="总页数" prop="pages">
+          <el-input v-model="form.pages"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="success" @click="createArticle">创 建</el-button>
-        <el-button type="primary" v-else @click="updateArticle">修 改</el-button>
+        <el-button @click="cancelDialog">取 消</el-button>
+        <el-button type="primary" @click="add">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="修改图书" center width="30%" :visible.sync="editDialog">
+      <el-form :model="updateForm"   ref="updateForm" label-width="80px">
+
+        <el-form-item label="图书名称" prop="name">
+          <el-input v-model="updateForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="作者" prop="author">
+          <el-input v-model="updateForm.author"></el-input>
+        </el-form-item>
+
+        <el-form-item label="出版社" prop="publish">
+          <el-input v-model="updateForm.publish"></el-input>
+        </el-form-item>
+        <el-form-item label="发布日期" prop="publishDate">
+          <el-date-picker type="date" placeholder="选择日期" v-model="updateForm.publishDate" style="width: 100%;"></el-date-picker>
+        </el-form-item>
+        <el-form-item label="图书类型" prop="bookType">
+          <el-input v-model="updateForm.bookType"></el-input>
+        </el-form-item>
+        <el-form-item label="总页数" prop="pages">
+          <el-input v-model="updateForm.pages"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelDialog">取 消</el-button>
+        <el-button type="primary" @click="edit">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -56,14 +133,38 @@
   export default {
     data() {
       return {
+
+
+        tableData: [],
+        total:10,
+        addDialog:false,
+        formLabelWidth:'120px',
+        editDialog:false,
+        listQuery:{
+          pageSize: 5,
+          pageNum: 1, 
+        },
+        form:{
+          name:'',
+          author:'',
+          publishDate:'',
+          pages:'',
+          publish:'',
+          bookType:''
+        },
+
+        updateForm:{
+          name:'',
+          author:'',
+          publishDate:'',
+          pages:'',
+          publish:'',
+          bookType:''
+        },
         totalCount: 0, //分页组件--数据总条数
         list: [],//表格的数据
         listLoading: false,//数据加载等待动画
-        listQuery: {
-          pageNum: 1,//页码
-          pageRow: 50,//每页条数
-          name: ''
-        },
+      
         dialogStatus: 'create',
         dialogFormVisible: false,
         textMap: {
@@ -81,19 +182,40 @@
     },
     methods: {
       getList() {
+        const _this = this;
         //查询列表
         if (!this.hasPerm('article:list')) {
           return
         }
-        this.listLoading = true;
-        this.api({
-          url: "/article/listArticle",
+        _this.listLoading = true;
+
+        _this.api({
+            url: "/book/findAll",
+            method: "get",
+            params: _this.listQuery
+          }).then(data => {
+            debugger;
+            console.log(data);
+            _this.listLoading = false;
+            
+            _this.tableData = data.datalist;
+            _this.listQuery.pageSize = data.pageSize;
+            _this.total = data.totalCount;
+            
+          })
+      },
+      page(data){
+        const _this = this;
+        _this.listQuery.pageNum = data;
+        _this.api({
+          url: "/book/findAll",
           method: "get",
-          params: this.listQuery
+          params: _this.listQuery
         }).then(data => {
-          this.listLoading = false;
-          this.list = data.list;
-          this.totalCount = data.totalCount;
+          console.log(data);
+          _this.tableData = data.datalist;
+          _this.listQuery.pageSize = data.pageSize;
+          _this.total = data.totalCount;
         })
       },
       handleSizeChange(val) {
